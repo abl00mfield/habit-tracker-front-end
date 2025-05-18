@@ -1,25 +1,55 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from "react";
 
+//create the context
 const UserContext = createContext();
 
-const getUserFromToken = () => {
-  const token = localStorage.getItem('token');
+//create the provider component
+const UserProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!token) return null;
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
-  return JSON.parse(atob(token.split('.')[1])).payload;
-};
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
 
-function UserProvider({ children }) {
-  const [user, setUser] = useState(getUserFromToken());
+    setLoading(false);
+  }, []);
 
-  const value = { user, setUser };
+  //sign in, store token & user
+  const signIn = ({ token, user }) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    setToken(token);
+    setUser(user);
+  };
+
+  const signOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUser(null);
+  };
 
   return (
-    <UserContext.Provider value={value}>
+    <UserContext.Provider
+      value={{
+        user,
+        token,
+        isLoggedIn: !!token,
+        signIn,
+        signOut,
+        loading,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
 };
 
-export { UserProvider, UserContext };
+export { UserContext, UserProvider };

@@ -1,24 +1,24 @@
-import { useContext } from 'react';
-import { Routes, Route } from 'react-router';
+import { useContext } from "react";
+import { Routes, Route } from "react-router";
 
-import NavBar from './components/NavBar/NavBar';
-import SignUpForm from './components/SignUpForm/SignUpForm';
-import SignInForm from './components/SignInForm/SignInForm';
-import Landing from './components/Landing/Landing';
-import Dashboard from './components/Dashboard/Dashboard';
+import NavBar from "./components/Layout/NavBar";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
-import { UserContext } from './contexts/UserContext';
+import Dashboard from "./pages/Dashboard";
+
+import { UserContext } from "./contexts/UserContext";
 
 const App = () => {
-  const { user } = useContext(UserContext);
-  
+  const { user, isLoggedIn, signin, signOut } = useContext(UserContext);
+
   return (
     <>
-      <NavBar/>
+      <NavBar />
       <Routes>
-        <Route path='/' element={user ? <Dashboard /> : <Landing />} />
-        <Route path='/sign-up' element={<SignUpForm />} />
-        <Route path='/sign-in' element={<SignInForm />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/sign-in" element={<SignIn />} />
       </Routes>
     </>
   );
