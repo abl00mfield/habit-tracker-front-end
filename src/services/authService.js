@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BACK_END_SERVER_URL;
+const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/auth`;
 
 //helper to decode JWT and return the payload (user)
 const decodeToken = (token) => {
@@ -9,7 +9,7 @@ const decodeToken = (token) => {
     const decoded = JSON.parse(atob(base64Payload));
     return decoded.payload;
   } catch (err) {
-    console.error("Error decoding token: " err);
+    console.error("Error decoding token: ", err);
     return null;
   }
 };
@@ -19,8 +19,7 @@ const signUp = async (formData) => {
     const res = await axios.post(`${BASE_URL}/sign-up`, formData);
     const token = res.data.token;
     const user = decodeToken(token);
-    return { token, user }    
-    
+    return { token, user };
   } catch (err) {
     console.log(err);
     throw new Error(err.response?.data?.err || "Sign up Failed");
@@ -29,10 +28,12 @@ const signUp = async (formData) => {
 
 const signIn = async (formData) => {
   try {
-   
+    const res = await axios.post(`${BASE_URL}/sign-in`, formData);
+    const token = res.data.token;
+    const user = decodeToken(token);
+    return { token, user };
   } catch (err) {
-   
-    throw new Error(err.response?.data?,err || "Sign in failed.");
+    throw new Error(err.response?.data?.err || "Sign in failed.");
   }
 };
 
